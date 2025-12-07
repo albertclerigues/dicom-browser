@@ -1,0 +1,58 @@
+Screen {
+    background: #050505;
+    color: #00ff9f; /* Neon Green */
+}
+
+Header {
+    background: #ff0055; /* Neon Pink */
+    color: #ffffff;
+    text-style: bold;
+    height: 3;
+    dock: top;
+}
+
+Footer {
+    background: #1a1a1a;
+    color: #00ff9f;
+    dock: bottom;
+    height: 1;
+}
+
+Tree {
+    background: #0a0a0a;
+    color: #00ff9f;
+    border: solid #00ff9f;
+    padding: 1;
+    scrollbar-gutter: stable;
+}
+
+Tree:focus {
+    border: double #ff0055; /* Pink border on focus */
+}
+
+Tree > .tree--cursor {
+    background: #333333;
+    color: #ffffff;
+    text-style: bold;
+}
+
+Tree > .tree--guides {
+    color: #444444;
+}
+
+Label {
+    padding: 1;
+}
+
+.tag-label {
+    color: #ff0055;
+    text-style: bold;
+}
+
+.vr-label {
+    color: #00ffff; /* Cyan */
+}
+
+.value-label {
+    color: #ffff00; /* Yellow */
+}
