@@ -23,6 +23,7 @@ class dcmbrowser(App):
         ("right", "expand_node", "Expand"),
         ("ctrl+e", "expand_all", "Expand All"),
         ("ctrl+w", "collapse_all", "Collapse All"),
+        ("ctrl+f", "toggle_search", "Toggle Search"),
     ]
 
     def __init__(self, dicom_path: str):
@@ -31,10 +32,15 @@ class dcmbrowser(App):
         self.node_data = {}  # Maps node.id to (tag, name, value_str)
         self.all_nodes = []  # All leaf and branch nodes for searching
         self.search_timer = None  # For debouncing search input
+        self.search_visible = False  # Track search box visibility
 
     def compose(self) -> ComposeResult:
-        yield Header(show_clock=True)
-        yield Input(placeholder="Search tags (name or value)...", id="search-input")
+        yield Header(show_clock=False)
+        yield Input(
+            placeholder="Search tags (name or value)...",
+            id="search-input",
+            classes="hidden",
+        )
         yield Static("", id="status-message")
         yield Tree("DICOM Root")
         yield Footer()
@@ -46,10 +52,16 @@ class dcmbrowser(App):
         try:
             ds = load_dicom(self.dicom_path)
             # Set root label to filename
-            tree.root.label = f"FILE: {self.dicom_path}"
+            tree.root.label = f"{self.dicom_path}"
             self.populate_tree(tree.root, ds)
         except Exception as e:
             tree.root.add(f"[bold red]Error loading file:[/bold red] {e}")
+
+    def _on_key(self, event) -> None:
+        """Handle key events at app level to intercept Ctrl+F."""
+        if event.key == "ctrl+f":
+            self.action_toggle_search()
+            event.prevent_default()
 
     def populate_tree(self, node: TreeNode, dataset: Dataset) -> None:
         for tag, name, vr, value_str, raw_value in iter_dataset(dataset):
@@ -178,6 +190,31 @@ class dcmbrowser(App):
         tree.root.collapse_all()
         self.update_status("All nodes collapsed")
 
+    def action_toggle_search(self) -> None:
+        """Toggle the visibility of the search input."""
+        search_input = self.query_one("#search-input", Input)
+        self.search_visible = not self.search_visible
+
+        if self.search_visible:
+            search_input.remove_class("hidden")
+            search_input.focus()
+        else:
+            search_input.add_class("hidden")
+            # Clear search when hiding
+            search_input.value = ""
+            # Restore original tree
+            tree = self.query_one(Tree)
+            tree.clear()
+            tree.root.expand()
+            ds = load_dicom(self.dicom_path)
+            tree.root.label = f"{self.dicom_path}"
+            self.node_data.clear()
+            self.all_nodes.clear()
+            self.populate_tree(tree.root, ds)
+            tree.root.collapse_all()
+            tree.root.expand()
+            self.update_status("")
+
     def update_status(self, message: str) -> None:
         """Update the status message display."""
         status = self.query_one("#status-message", Static)
@@ -197,7 +234,7 @@ class dcmbrowser(App):
             tree.clear()
             tree.root.expand()
             ds = load_dicom(self.dicom_path)
-            tree.root.label = f"FILE: {self.dicom_path}"
+            tree.root.label = f"{self.dicom_path}"
             self.node_data.clear()
             self.all_nodes.clear()
             self.populate_tree(tree.root, ds)
@@ -224,7 +261,7 @@ class dcmbrowser(App):
             # Rebuild tree with no nodes
             tree.clear()
             tree.root.expand()
-            tree.root.label = f"FILE: {self.dicom_path}"
+            tree.root.label = f"{self.dicom_path}"
         else:
             self.update_status(f"[bold #1A73A3]{match_count} match(es) found[/]")
 
@@ -240,7 +277,7 @@ class dcmbrowser(App):
             tree.clear()
             tree.root.expand()
             ds = load_dicom(self.dicom_path)
-            tree.root.label = f"FILE: {self.dicom_path}"
+            tree.root.label = f"{self.dicom_path}"
             old_node_data = self.node_data.copy()
             self.node_data.clear()
             self.all_nodes.clear()
