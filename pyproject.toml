@@ -1,10 +1,13 @@
 [project]
 name = "dicom-navigator"
 version = "0.1.0"
-description = "Add your description here"
+description = "DICOM tag navigator with rich CLI interface"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = ["pydicom>=3.0.1", "requests>=2.32.5", "textual>=6.8.0"]
+
+[project.scripts]
+dcmbrowse = "src.main:main"
 
 
 [tool.uv.build-backend]
