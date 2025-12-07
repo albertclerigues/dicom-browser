@@ -1,43 +1,52 @@
+/* DICOM Dark Theme Color Palette:
+   #0D1117 - Dark background
+   #0A2E4E - Deep blue
+   #005DAA - Primary blue
+   #1A73A3 - Light blue
+   #0F8B8D - Teal accent
+   #F5F7FA - Light text
+*/
+
 Screen {
-    background: #050505;
-    color: #00ff9f; /* Neon Green */
+    background: #0D1117;
+    color: #F5F7FA;
 }
 
 Header {
-    background: #ff0055; /* Neon Pink */
-    color: #ffffff;
+    background: #005DAA; /* Primary Blue */
+    color: #F5F7FA;
     text-style: bold;
     height: 3;
     dock: top;
 }
 
 Footer {
-    background: #1a1a1a;
-    color: #00ff9f;
+    background: #0A2E4E; /* Deep Blue */
+    color: #F5F7FA;
     dock: bottom;
     height: 1;
 }
 
 Tree {
-    background: #0a0a0a;
-    color: #00ff9f;
-    border: solid #00ff9f;
+    background: #0D1117;
+    color: #F5F7FA;
+    border: solid #1A73A3; /* Light Blue */
     padding: 1;
     scrollbar-gutter: stable;
 }
 
 Tree:focus {
-    border: double #ff0055; /* Pink border on focus */
+    border: double #005DAA; /* Primary Blue border on focus */
 }
 
 Tree > .tree--cursor {
-    background: #333333;
-    color: #ffffff;
+    background: #0A2E4E; /* Deep Blue */
+    color: #F5F7FA;
     text-style: bold;
 }
 
 Tree > .tree--guides {
-    color: #444444;
+    color: #1A73A3;
 }
 
 Label {
@@ -45,27 +54,27 @@ Label {
 }
 
 .tag-label {
-    color: #ff0055;
+    color: #1A73A3; /* Light Blue */
     text-style: bold;
 }
 
 Input {
-    background: #1a1a1a;
-    color: #00ff9f;
-    border: solid #00ff9f;
+    background: #0A2E4E; /* Deep Blue */
+    color: #F5F7FA;
+    border: solid #1A73A3; /* Light Blue */
     margin: 0 1;
     padding: 0 1;
 }
 
 Input:focus {
-    border: double #ff0055;
+    border: double #005DAA; /* Primary Blue */
 }
 
 #status-message {
     height: 1;
     padding: 0 1;
-    background: #0a0a0a;
-    color: #00ff9f;
+    background: #0A2E4E;
+    color: #F5F7FA;
 }
 
 .hidden {
@@ -73,9 +82,9 @@ Input:focus {
 }
 
 .vr-label {
-    color: #00ffff; /* Cyan */
+    color: #0F8B8D; /* Teal */
 }
 
 .value-label {
-    color: #ffff00; /* Yellow */
+    color: #1A73A3; /* Light Blue */
 }
