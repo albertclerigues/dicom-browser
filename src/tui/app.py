@@ -8,7 +8,11 @@ from src.dicom.loader import iter_dataset, load_dicom
 
 class DicomTreeApp(App):
     CSS_PATH = "styles.tcss"
-    BINDINGS = [("q", "quit", "Quit")]
+    BINDINGS = [
+        ("q", "quit", "Quit"),
+        ("left", "collapse_node", "Collapse"),
+        ("right", "expand_node", "Expand"),
+    ]
 
     def __init__(self, dicom_path: str):
         super().__init__()
@@ -33,9 +37,14 @@ class DicomTreeApp(App):
 
     def populate_tree(self, node: TreeNode, dataset: Dataset) -> None:
         for tag, name, vr, value_str, raw_value in iter_dataset(dataset):
-            # Format the label with some colors using rich markup
-            # Tag in pink, VR in cyan, Value in yellow
-            label = f"[bold #ff0055]{tag}[/] [bold]{name}[/] ([#00ffff]{vr}[/]): [#ffff00]{value_str}[/]"
+            # Format the label with fixed-width columns
+            # Tag: 13 chars, Name: 40 chars, VR: 4 chars, Value: remaining
+            tag_col = f"[bold #ff0055]{tag:<13}[/]"
+            name_col = f"[bold]{name:<40}[/]"
+            vr_col = f"[#00ffff]{vr:<4}[/]"
+            value_col = f"[#ffff00]{value_str}[/]"
+
+            label = f"{tag_col} {name_col} {vr_col} {value_col}"
 
             if vr == "SQ":
                 child = node.add(label, expand=False)
@@ -45,3 +54,15 @@ class DicomTreeApp(App):
                     self.populate_tree(item_node, item)
             else:
                 node.add_leaf(label)
+
+    def action_expand_node(self) -> None:
+        """Expand the currently selected tree node."""
+        tree = self.query_one(Tree)
+        if tree.cursor_node and not tree.cursor_node.is_expanded:
+            tree.cursor_node.expand()
+
+    def action_collapse_node(self) -> None:
+        """Collapse the currently selected tree node."""
+        tree = self.query_one(Tree)
+        if tree.cursor_node and tree.cursor_node.is_expanded:
+            tree.cursor_node.collapse()
