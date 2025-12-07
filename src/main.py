@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from src.tui.app import DicomTreeApp
+from src.tui.app import dcmbrowser
 
 
 def main():
@@ -9,7 +9,7 @@ def main():
     parser.add_argument("file", help="Path to the DICOM file")
     args = parser.parse_args()
 
-    app = DicomTreeApp(args.file)
+    app = dcmbrowser(args.file)
     app.run()
 
 

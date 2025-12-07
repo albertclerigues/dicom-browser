@@ -9,8 +9,13 @@ from textual.widgets.tree import TreeNode
 
 from src.dicom.loader import iter_dataset, load_dicom
 
+TAG_COLOR = "#0F8B8D"
+NAME_COLOR = "#1A73A3"
+VR_COLOR = "#005DAA"
+VALUE_COLOR = "#F5F7FA"
 
-class DicomTreeApp(App):
+
+class dcmbrowser(App):
     CSS_PATH = "styles.tcss"
     BINDINGS = [
         ("q", "quit", "Quit"),
@@ -50,10 +55,10 @@ class DicomTreeApp(App):
         for tag, name, vr, value_str, raw_value in iter_dataset(dataset):
             # Format the label with fixed-width columns
             # Tag: 13 chars, Name: 40 chars, VR: 4 chars, Value: remaining
-            tag_col = f"[bold #ff0055]{tag:<13}[/]"
-            name_col = f"[bold]{name:<40}[/]"
-            vr_col = f"[#00ffff]{vr:<4}[/]"
-            value_col = f"[#ffff00]{value_str}[/]"
+            tag_col = f"[bold {TAG_COLOR}]{tag:<13}[/]"
+            name_col = f"[bold {NAME_COLOR}]{name:<40}[/]"
+            vr_col = f"[{VR_COLOR}]{vr:<4}[/]"
+            value_col = f"[{VALUE_COLOR}]{value_str}[/]"
 
             label = f"{tag_col} {name_col} {vr_col} {value_col}"
 
@@ -86,33 +91,33 @@ class DicomTreeApp(App):
             is_match = query in name.lower() or query in value_str.lower()
 
             # Format the label with fixed-width columns
-            tag_col = f"[bold #ff0055]{tag:<13}[/]"
+            tag_col = f"[bold {TAG_COLOR}]{tag:<13}[/]"
 
             # Highlight matches in name
             if query in name.lower():
                 idx = name.lower().index(query)
                 name_highlighted = (
                     name[:idx]
-                    + f"[black on #00ff9f]{name[idx:idx+len(query)]}[/]"
+                    + f"[#0D1117 on {VR_COLOR}]{name[idx:idx+len(query)]}[/]"
                     + name[idx + len(query) :]
                 )
                 name_col = f"[bold]{name_highlighted:<40}[/]"
             else:
                 name_col = f"[bold]{name:<40}[/]"
 
-            vr_col = f"[#00ffff]{vr:<4}[/]"
+            vr_col = f"[#0F8B8D]{vr:<4}[/]"
 
             # Highlight matches in value
             if query in value_str.lower():
                 idx = value_str.lower().index(query)
                 value_highlighted = (
                     value_str[:idx]
-                    + f"[black on #00ff9f]{value_str[idx:idx+len(query)]}[/]"
+                    + f"[#0D1117 on {VR_COLOR}]{value_str[idx:idx+len(query)]}[/]"
                     + value_str[idx + len(query) :]
                 )
-                value_col = f"[#ffff00]{value_highlighted}[/]"
+                value_col = f"[{VALUE_COLOR}]{value_highlighted}[/]"
             else:
-                value_col = f"[#ffff00]{value_str}[/]"
+                value_col = f"[{VALUE_COLOR}]{value_str}[/]"
 
             label = f"{tag_col} {name_col} {vr_col} {value_col}"
 
@@ -176,7 +181,7 @@ class DicomTreeApp(App):
     def update_status(self, message: str) -> None:
         """Update the status message display."""
         status = self.query_one("#status-message", Static)
-        status.update(f"[bold #00ff9f]{message}[/]")
+        status.update(f"[bold #1A73A3]{message}[/]")
 
     @work(exclusive=True)
     async def perform_search(self, query: str) -> None:
@@ -215,13 +220,13 @@ class DicomTreeApp(App):
         match_count = len(matching_nodes)
 
         if match_count == 0:
-            self.update_status("[bold #ff0055]No matches found[/]")
+            self.update_status("[bold #005DAA]No matches found[/]")
             # Rebuild tree with no nodes
             tree.clear()
             tree.root.expand()
             tree.root.label = f"FILE: {self.dicom_path}"
         else:
-            self.update_status(f"[bold #00ff9f]{match_count} match(es) found[/]")
+            self.update_status(f"[bold #1A73A3]{match_count} match(es) found[/]")
 
             # Collect all nodes to show (matches + their ancestors)
             nodes_to_show = set(matching_nodes)
