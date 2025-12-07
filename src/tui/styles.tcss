@@ -49,6 +49,29 @@ Label {
     text-style: bold;
 }
 
+Input {
+    background: #1a1a1a;
+    color: #00ff9f;
+    border: solid #00ff9f;
+    margin: 0 1;
+    padding: 0 1;
+}
+
+Input:focus {
+    border: double #ff0055;
+}
+
+#status-message {
+    height: 1;
+    padding: 0 1;
+    background: #0a0a0a;
+    color: #00ff9f;
+}
+
+.hidden {
+    display: none;
+}
+
 .vr-label {
     color: #00ffff; /* Cyan */
 }
