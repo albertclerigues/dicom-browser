@@ -48,7 +48,7 @@ class dcmbrowser(App):
     def on_mount(self) -> None:
         header = self.query_one(Header)
         header.tall = False
-        header.icon = "🩻"
+        header.icon = "📋"
 
         tree = self.query_one(Tree)
         tree.root.expand()
@@ -76,8 +76,10 @@ class dcmbrowser(App):
     def populate_tree(self, node: TreeNode, dataset: Dataset) -> None:
         for tag, name, vr, value_str, raw_value in iter_dataset(dataset):
             # Format the label with fixed-width columns
-            # Tag: 13 chars, Name: 40 chars, VR: 4 chars, Value: remaining
-            tag_col = f"[bold {TAG_COLOR}]{tag:<13}[/]"
+            # Tag: 13 chars for leafs, 11 for sequences (to account for tree arrow)
+            # Name: 40 chars, VR: 4 chars, Value: remaining
+            tag_width = 11 if vr == "SQ" else 13
+            tag_col = f"[bold {TAG_COLOR}]{tag:<{tag_width}}[/]"
             name_col = f"[bold {NAME_COLOR}]{name:<40}[/]"
             vr_col = f"[{VR_COLOR}]{vr:<4}[/]"
             value_col = f"[{VALUE_COLOR}]{value_str}[/]"
@@ -113,7 +115,9 @@ class dcmbrowser(App):
             is_match = query in name.lower() or query in value_str.lower()
 
             # Format the label with fixed-width columns
-            tag_col = f"[bold {TAG_COLOR}]{tag:<13}[/]"
+            # Tag: 13 chars for leafs, 11 for sequences (to account for tree arrow)
+            tag_width = 11 if vr == "SQ" else 13
+            tag_col = f"[bold {TAG_COLOR}]{tag:<{tag_width}}[/]"
 
             # Highlight matches in name
             if query in name.lower():
