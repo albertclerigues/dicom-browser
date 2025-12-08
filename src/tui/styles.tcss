@@ -16,7 +16,7 @@ Header {
     background: #005DAA; /* Primary Blue */
     color: #F5F7FA;
     text-style: bold;
-    height: 3;
+    height: 1;
     dock: top;
 }
 

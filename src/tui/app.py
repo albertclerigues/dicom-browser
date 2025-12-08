@@ -41,11 +41,15 @@ class dcmbrowser(App):
             id="search-input",
             classes="hidden",
         )
-        yield Static("", id="status-message")
+        yield Static("", id="status-message", classes="hidden")
         yield Tree("DICOM Root")
         yield Footer()
 
     def on_mount(self) -> None:
+        header = self.query_one(Header)
+        header.tall = False
+        header.icon = "📋"
+
         tree = self.query_one(Tree)
         tree.root.expand()
 
@@ -193,13 +197,16 @@ class dcmbrowser(App):
     def action_toggle_search(self) -> None:
         """Toggle the visibility of the search input."""
         search_input = self.query_one("#search-input", Input)
+        status_message = self.query_one("#status-message", Static)
         self.search_visible = not self.search_visible
 
         if self.search_visible:
             search_input.remove_class("hidden")
+            status_message.remove_class("hidden")
             search_input.focus()
         else:
             search_input.add_class("hidden")
+            status_message.add_class("hidden")
             # Clear search when hiding
             search_input.value = ""
             # Restore original tree
