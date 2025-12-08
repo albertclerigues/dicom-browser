@@ -48,7 +48,7 @@ class dcmbrowser(App):
     def on_mount(self) -> None:
         header = self.query_one(Header)
         header.tall = False
-        header.icon = "📋"
+        header.icon = "🩻"
 
         tree = self.query_one(Tree)
         tree.root.expand()
@@ -65,6 +65,12 @@ class dcmbrowser(App):
         """Handle key events at app level to intercept Ctrl+F."""
         if event.key == "ctrl+f":
             self.action_toggle_search()
+            event.prevent_default()
+        elif event.key == "ctrl+e":
+            self.action_expand_all()
+            event.prevent_default()
+        elif event.key == "ctrl+w":
+            self.action_collapse_all()
             event.prevent_default()
 
     def populate_tree(self, node: TreeNode, dataset: Dataset) -> None:
