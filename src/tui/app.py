@@ -172,6 +172,20 @@ class dcmbrowser(App):
         tree = self.query_one(Tree)
         if tree.cursor_node and not tree.cursor_node.is_expanded:
             tree.cursor_node.expand()
+            self._auto_expand_single_child_nodes(tree.cursor_node)
+
+    def _auto_expand_single_child_nodes(self, node: TreeNode) -> None:
+        """Recursively expand child nodes if they have only one child."""
+        if not node.allow_expand:
+            return
+
+        # Check if this node has exactly one child
+        if len(node.children) == 1:
+            child = node.children[0]
+            if not child.is_expanded and child.allow_expand:
+                child.expand()
+                # Recursively check the child
+                self._auto_expand_single_child_nodes(child)
 
     def action_collapse_node(self) -> None:
         """Collapse the currently selected tree node."""
@@ -299,3 +313,7 @@ class dcmbrowser(App):
         """Handle search input changes with debouncing."""
         if event.input.id == "search-input":
             self.perform_search(event.value)
+
+    def on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
+        """Handle tree node expansion (including clicks)."""
+        self._auto_expand_single_child_nodes(event.node)
